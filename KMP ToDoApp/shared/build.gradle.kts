@@ -30,7 +30,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.gitlive.firebase.firestore)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0-RC.2")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
             implementation("com.benasher44:uuid:0.8.4")
 
@@ -50,10 +50,6 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }
-//dependencies {
-//    implementation(libs.firebase.firestore.ktx)
-//    implementation(libs.firebase.auth.ktx)
-//}
 
 dependencies {
     implementation("dev.gitlive:firebase-auth:2.1.0")
