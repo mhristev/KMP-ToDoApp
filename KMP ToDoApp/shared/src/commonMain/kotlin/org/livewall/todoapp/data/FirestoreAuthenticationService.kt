@@ -20,35 +20,32 @@ class FirestoreAuthenticationService: AuthenticationService {
         get() = auth.authStateChanged
 
     override suspend fun signIn(email: String, password: String): AppUser? {
-        val result = auth.signInWithEmailAndPassword(email, password)
-        val firebaseUser = result.user
+        try {
+            val result = auth.signInWithEmailAndPassword(email, password)
+            val firebaseUser = result.user
 
-        return firebaseUser?.let {
-            userRepository.getAppUser(it.uid)
+            return firebaseUser?.let {
+                userRepository.getAppUser(it.uid)
+            }
+        } catch (e: Exception) {
+            return this.signUp(email, password)
         }
 
     }
 
     override suspend fun signUp(email: String, password: String): AppUser? {
-        try {
-            val result = auth.createUserWithEmailAndPassword(email, password)
-            val firebaseUser = result.user
-            return if (firebaseUser != null) {
-                val appUser = AppUser(
-                    id = firebaseUser.uid,
-                    email = firebaseUser.email ?: email
-                )
-                userRepository.registerUser(appUser)
-                appUser
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            return this.signIn(email, password)
+        val result = auth.createUserWithEmailAndPassword(email, password)
+        val firebaseUser = result.user
+        return if (firebaseUser != null) {
+            val appUser = AppUser(
+                id = firebaseUser.uid,
+                email = firebaseUser.email ?: email
+            )
+            userRepository.registerUser(appUser)
+            appUser
+        } else {
+            null
         }
-
-
-
     }
 
     override suspend fun signOut() {

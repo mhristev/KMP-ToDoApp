@@ -13,9 +13,8 @@ import org.livewall.todoapp.domainimport.ToDoTask
 
 const val TODOTASK_ARRAY = "tasks"
 
-class FirestoreToDoTaskRepository : ToDoTaskRepository {
-    
-    private val currentUserId = "2uTw76whdwW37bOkqQgFCNnFEpi1"
+class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskRepository {
+
     private val db = Firebase.firestore
     val documentReference = db.collection("Users").document(currentUserId)
 
