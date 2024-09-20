@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -33,7 +32,6 @@ fun App() {
         var userEmail by remember { mutableStateOf("") }
         var userPassword by remember { mutableStateOf("") }
 
-        var currentUser by remember { mutableStateOf(authService.currentUser) }
         var appUser by remember { mutableStateOf<AppUser?>(null) }
 
         val coroutineScope = rememberCoroutineScope()
@@ -53,7 +51,7 @@ fun App() {
 
         NavHost(navController = navController, startDestination = "home") {
             composable("home") {
-                if (appUser == null) {
+                if (authService.currentUser == null) {
                     LoginView(
                         userEmail = userEmail,
                         onEmailChange = { userEmail = it },
@@ -100,9 +98,37 @@ fun App() {
                             }
                         },
                         onTaskCheckedChange = { task, isChecked ->
-                            // Update the task's completed status
-                            appUser?.tasks?.find { it.id == task.id }?.isCompleted = isChecked
+                            val updatedTask = appUser?.tasks?.find { it.id == task.id }
+                            if (updatedTask != null) {
+                                updatedTask.isCompleted = isChecked
+                                scope.launch {
+                                    appUser?.id?.let {
+                                        FirestoreToDoTaskRepository(it).updateToDoTask(
+                                            updatedTask
+                                        )
+                                    }
+                                }
+                            }
+
+//                            appUser?.tasks?.find { it.id == task.id }?.isCompleted = isChecked
+//                            taskRepository.updateToDoTask()
+                        },
+                        onSaveTask = { task ->
+                            val updatedTask = appUser?.tasks?.find { it.id == task.id }
+                            scope.launch {
+                                appUser?.id?.let {
+
+                                        FirestoreToDoTaskRepository(it).updateToDoTask(
+                                            task
+                                        )
+
+                                }
+                            }
+
+//                            appUser?.tasks?.find { it.id == task.id }?.isCompleted = isChecked
+//                            taskRepository.updateToDoTask()
                         }
+
 
                     )
 
@@ -119,13 +145,16 @@ fun App() {
                                 )
                             }
                             // Navigate back to home after saving the task
+                            appUser = appUser?.id?.let { it1 -> repository.getAppUser(it1) }
                             navController.popBackStack()
                         }
                     },
                     onCancel = {
                         // Navigate back to home if the task is not saved
                         navController.popBackStack()
-                    }
+                    },
+                    initialTitle = "",
+                    initialDescription = ""
                 )
             }
         }

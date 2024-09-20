@@ -9,11 +9,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TaskInputView(
+    initialTitle: String, // Receive initial title
+    initialDescription: String,
     onSaveTask: (String, String) -> Unit,
     onCancel: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(initialTitle) }
+    var description by remember { mutableStateOf(initialDescription) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),

@@ -11,4 +11,5 @@ interface ToDoTaskRepository {
     suspend fun addToDoTask(toDoTask: ToDoTask)
     suspend fun updateToDoTask(toDoTask: ToDoTask)
     suspend fun deleteToDoTask(toDoTask: ToDoTask)
+    suspend fun markToDoTaskCompleted(toDoTask: ToDoTask)
 }

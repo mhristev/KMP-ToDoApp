@@ -6,7 +6,6 @@ import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.datetime.LocalDateTime
 
 import org.livewall.todoapp.domain.ToDoTaskRepository
 import org.livewall.todoapp.domainimport.ToDoTask
@@ -56,22 +55,28 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
     }
 
     override suspend fun updateToDoTask(toDoTask: ToDoTask) {
-        val taskRef = documentReference.collection(TODOTASK_ARRAY).document(toDoTask.id)
         try {
-            val task = taskRef.get()
-            if (task.exists) {
-                val oldTask = task.data<ToDoTask>()
-                oldTask.title = toDoTask.title
-                oldTask.description = toDoTask.description
-                oldTask.isCompleted = toDoTask.isCompleted
-                
-                taskRef.set(oldTask)
-                println("Task updated successfully.")
-            } else {
-                println("Task with id ${toDoTask.id} does not exist.")
+            val tasks = documentReference.get()
+                .get<List<ToDoTask>>(TODOTASK_ARRAY)
+
+            val updatedTasks = tasks.map { task ->
+                if (task.id == toDoTask.id) {
+                    task.copy(isCompleted = toDoTask.isCompleted,
+                        title = toDoTask.title,
+                        description = toDoTask.description,
+                        )
+                } else {
+                    task
+                }
             }
+
+            documentReference.update(mapOf(
+                TODOTASK_ARRAY to updatedTasks
+            ))
+
+
         } catch (e: Exception) {
-            println("Error updating task with id ${toDoTask.id}: ${e.message}")
+            println("Error updating isCompleted task with id ${toDoTask.id}: ${e.message}")
         }
     }
 
@@ -84,6 +89,29 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
         } catch (e: Exception) {
             println("Error deleting task: ${e.message}")
         }	
+    }
+
+    override suspend fun markToDoTaskCompleted(toDoTask: ToDoTask) {
+        try {
+            val tasks = documentReference.get()
+                .get<List<ToDoTask>>(TODOTASK_ARRAY)
+
+            val updatedTasks = tasks.map { task ->
+                if (task.id == toDoTask.id) {
+                    task.copy(isCompleted = toDoTask.isCompleted)
+                } else {
+                    task
+                }
+            }
+
+            documentReference.update(mapOf(
+                TODOTASK_ARRAY to updatedTasks
+            ))
+
+
+        } catch (e: Exception) {
+            println("Error updating isCompleted task with id ${toDoTask.id}: ${e.message}")
+        }
     }
 
 }

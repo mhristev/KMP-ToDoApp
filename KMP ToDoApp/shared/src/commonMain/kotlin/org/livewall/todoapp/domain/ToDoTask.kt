@@ -10,8 +10,9 @@ import kotlinx.serialization.Serializable
 data class ToDoTask(
     var title: String,          
     var description: String?,
-    @SerialName("completed") var isCompleted: Boolean
-) {
+    @SerialName("completed") var isCompleted: Boolean,
     val id: String =  uuid4().toString()
+) {
+
     
 }
