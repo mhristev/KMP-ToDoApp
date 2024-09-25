@@ -5,12 +5,12 @@ import Combine
 
 struct HomeView: View {
     var authService: FirestoreAuthenticationService
-    @State private var viewModel: ViewModel
+    @StateObject private var viewModel: ViewModel
     @State private var showModal = false
     
     init(authService: FirestoreAuthenticationService) {
         self.authService = authService
-        self.viewModel = ViewModel(authService: authService)
+        _viewModel = StateObject(wrappedValue: ViewModel(authService: authService))  
     }
     
     var showLogin: Bool {
@@ -21,59 +21,58 @@ struct HomeView: View {
         
         ZStack {
             VStack {
-                Button("Start Receiving") {
-                    Task {
-                        await viewModel.startObserving()
+                ToDoTaskListComponent(
+                    toDoTasks: viewModel.toDoTasks,
+                    onDeleteTask: { task in
+                        Task {
+                            await viewModel.deleteTask(task: task)
+                        }
+                    },
+                    onToggleCompleted: { task in
+                        Task {
+                            await viewModel.toggleTaskCompletion(task: task)
+                        }
+                        
+                    },
+                    onUpdateTask: { task, newTitle, newDetails, newIsCompleted in
+                        task.title = newTitle
+                        task.details = newDetails
+                        task.isCompleted = newIsCompleted
+                        Task {
+                            await viewModel.updateTask(task: task)
+                        }
+                        
                     }
-                }
-                
-                ToDoTaskListComponent(toDoTasks: viewModel.values, userId: authService.currentUser!.uid, onDelete: {  atPosition in
-                    viewModel.deleteTask(atPosition: atPosition)
-                    
-                    Task {
-                        await viewModel.startObserving()
-                    }
-                })
+                )
             }
             .padding()
 
             VStack {
-                           HStack {
-                               Button(action: {
-                                   // Logout action here
-                                   print("Logout pressed")
-//                                   Task {
-//                                       do {
-//                                           try await authService.signOut()
-//                                           
-//                                           //LoginView()
-//                                           
-//                                       } catch {
-//                                           print(error.localizedDescription)
-//                                       }
-//                                   }
-                                   viewModel.signOut()
-                               }) {
-                                   Image(systemName: "arrow.left.square.fill")
-                                       .font(.system(size: 24))
-                                       .frame(width: 40, height: 40)
-                                       .foregroundColor(.white)
-                                       .background(Color.purple)
-                                       .clipShape(RoundedRectangle(cornerRadius: 10))
-                                       .shadow(radius: 5)
-                               }
-                               .padding(.leading)
-                               .padding(.top, 20)
+               HStack {
+                   Button(action: {
+                       print("Logout pressed")
+                       viewModel.signOut()
+                   }) {
+                       Image(systemName: "arrow.left.square.fill")
+                           .font(.system(size: 24))
+                           .frame(width: 40, height: 40)
+                           .foregroundColor(.white)
+                           .background(Color.purple)
+                           .clipShape(RoundedRectangle(cornerRadius: 10))
+                           .shadow(radius: 5)
+                   }
+                   .padding(.leading)
+                   .padding(.top, 20)
 
-                               Spacer() // Keep the button at the top left
-                           }
-                           Spacer() // Push the "+" button to the bottom
-                       }
+                   Spacer()
+               }
+               Spacer()
+           }
             
             VStack {
-                Spacer() // button to the bottom
+                Spacer()
                 HStack {
-                    Spacer() // the button to the right
+                    Spacer()
                     Button(action: {
                         showModal = true
                     }) {
@@ -93,11 +92,9 @@ struct HomeView: View {
             LoginView(authService: authService)
         }
          .sheet(isPresented: $showModal, onDismiss: {
-            Task {
-                await viewModel.startObserving() 
-            }
+             viewModel.loadTasks()
         }) {
-            ToDoTaskModalView(userId: authService.currentUser!.uid)
+            ToDoTaskCreateView(userId: authService.currentUser!.uid)
         }
     }
 }

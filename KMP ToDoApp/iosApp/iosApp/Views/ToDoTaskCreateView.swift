@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ToDoTaskModalView: View {
+struct ToDoTaskCreateView: View {
     @State private var viewModel: ViewModel
     @Environment(\.dismiss) var dismiss
     
@@ -22,7 +22,6 @@ struct ToDoTaskModalView: View {
                 .font(.title)
                 .fontWeight(.bold)
             
-            // Input fields for title and description
             TextField("Task Title", text: $viewModel.title)
                 .padding()
                 .background(Color(UIColor.systemGray6))
@@ -35,7 +34,7 @@ struct ToDoTaskModalView: View {
                 .cornerRadius(10)
                 .padding(.horizontal)
 
-            // Save Button
+            
             Button(action: {
                 if !viewModel.isSaveDisabled {
                     viewModel.onSave()

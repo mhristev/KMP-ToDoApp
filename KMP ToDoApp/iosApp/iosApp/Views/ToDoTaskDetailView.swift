@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+
 struct ToDoTaskDetailView: View {
     @State var title: String
     @State var details: String
@@ -19,21 +20,19 @@ struct ToDoTaskDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Editable title field
+
             TextField("Task Title", text: $title)
                 .font(.title)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
 
-            // Editable details field
             TextField("Task Details", text: $details)
                 .font(.body)
                 .padding()
                 .background(Color(UIColor.systemGray6))
                 .cornerRadius(10)
 
-            // Toggle for task completion status
             Toggle(isOn: $isCompleted) {
                 Text("Mark as Completed")
                     .font(.headline)
@@ -42,11 +41,10 @@ struct ToDoTaskDetailView: View {
 
             Spacer()
 
-            // Save Button
             Button(action: {
                 Task {
                     await onSave(title, details, isCompleted)
-                    dismiss()  // Close the view after saving
+                    dismiss()
                 }
             }) {
                 Text("Save")
@@ -63,7 +61,6 @@ struct ToDoTaskDetailView: View {
         .navigationTitle("Edit Task")
     }
 }
-
 //#Preview {
 //    ToDoTaskDetailView()
 //}

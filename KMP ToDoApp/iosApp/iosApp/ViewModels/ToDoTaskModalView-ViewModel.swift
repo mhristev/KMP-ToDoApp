@@ -9,7 +9,7 @@
 import Foundation
 import Shared
 
-extension ToDoTaskModalView {
+extension ToDoTaskCreateView {
     
     @Observable
     class ViewModel {

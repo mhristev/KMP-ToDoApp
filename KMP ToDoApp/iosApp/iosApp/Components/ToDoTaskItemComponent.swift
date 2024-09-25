@@ -11,58 +11,57 @@ import SwiftUI
 struct ToDoTaskItemComponent: View {
     let title: String
     let details: String
-    @Binding var isCompleted: Bool
-    var onToggleCompleted: (_ isCompleted: Bool) async -> Void
+    var isCompleted: Bool
     
-    @State private var isLoading = false
+    var onToggleCompleted: () -> Void
+    var onUpdateTask: (_ updatedTitle: String, _ updatedDetails: String, _ updatedIsCompleted: Bool) -> Void
+    
     @State private var showTaskModal = false
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.headline)
-                    .foregroundColor(.primary)
-                    .strikethrough(isCompleted, color: .black)
+                    .strikethrough(isCompleted, color: .gray)
                 
                 Text(details)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 2)
                     .strikethrough(isCompleted, color: .gray)
             }
-            
+            .contentShape(Rectangle())
+            .onTapGesture {
+                showTaskModal = true
+            }
             
             Spacer()
-
-            if isLoading {
-                ProgressView()
+            
+            Button(action: {
+                onToggleCompleted()
+            }) {
+                Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+                    .resizable()
                     .frame(width: 24, height: 24)
-            } else {
-                Button(action: {
-                    Task {
-                        isLoading = true
-                        isCompleted.toggle()
-                        await onToggleCompleted(self.isCompleted)
-                        isLoading = false
-                    }
-                }) {
-                    Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(isCompleted ? .green : .gray)
-                }
-                .buttonStyle(PlainButtonStyle())
+                    .foregroundColor(isCompleted ? .green : .gray)
             }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            showTaskModal = true
+            .buttonStyle(PlainButtonStyle())
         }
         .padding()
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray, lineWidth: 1)
+        )
         .sheet(isPresented: $showTaskModal) {
-            ToDoTaskModalView(userId: "2uTw76whdwW37bOkqQgFCNnFEpi1")
+            ToDoTaskDetailView(
+                title: title,
+                details: details,
+                isCompleted: isCompleted,
+                onSave: { newTitle, newDetails, newIsCompleted in
+                    onUpdateTask(newTitle, newDetails, newIsCompleted)
+                }
+            )
         }
+        
     }
 }
 
