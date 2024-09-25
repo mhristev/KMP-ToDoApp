@@ -1,33 +1,26 @@
+//
+//  ContentView2.swift
+//  iosApp
+//
+//  Created by Martin Hristev on 24.09.24.
+//  Copyright © 2024 orgName. All rights reserved.
+//
+
 import SwiftUI
 import Shared
 
 struct ContentView: View {
-    @State private var showContent = false
+    private var authService = FirestoreAuthenticationService()
+    
     var body: some View {
-        VStack {
-            Button("Click me!") {
-                withAnimation {
-                    showContent = !showContent
-                }
-            }
-
-            if showContent {
-                VStack(spacing: 16) {
-                    Image(systemName: "swift")
-                        .font(.system(size: 200))
-                        .foregroundColor(.accentColor)
-                    Text("SwiftUI: \(Greeting().greet())")
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
+        guard let _ = authService.currentUser else {
+            return AnyView(LoginView(authService: authService))
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding()
+        
+        return AnyView(HomeView(authService: authService))
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+#Preview {
+    ContentView()
 }

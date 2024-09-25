@@ -9,4 +9,6 @@ plugins {
     
     kotlin("plugin.serialization") version libs.versions.kotlin
     id("com.google.gms.google-services") version "4.4.2" apply false
+
+    id("co.touchlab.skie") version "0.8.4" apply false
 }

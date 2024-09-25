@@ -11,6 +11,7 @@ interface AuthenticationService {
     val authState: Flow<FirebaseUser?>
 
     /** Sign in with email and password. */
+    @Throws(Exception::class)
     suspend fun signIn(email: String, password: String):  AppUser?
 
     /** Sign up (register) with email and password. */

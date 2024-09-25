@@ -19,6 +19,7 @@ class FirestoreAuthenticationService: AuthenticationService {
     override val authState: Flow<FirebaseUser?>
         get() = auth.authStateChanged
 
+    @Throws(Exception::class)
     override suspend fun signIn(email: String, password: String): AppUser? {
         try {
             val result = auth.signInWithEmailAndPassword(email, password)
@@ -28,7 +29,7 @@ class FirestoreAuthenticationService: AuthenticationService {
                 userRepository.getAppUser(it.uid)
             }
         } catch (e: Exception) {
-            return this.signUp(email, password)
+            throw e
         }
 
     }

@@ -69,7 +69,7 @@ fun HomeView(
                             val sortedTasks = tasks.sortedBy { it.isCompleted }
                             items(count = sortedTasks.size) { index ->
                                 val task = sortedTasks[index]
-                                task.description?.let {
+                                task.details?.let {
                                     TaskItem(
                                         title = task.title,
                                         description = it,
@@ -90,13 +90,13 @@ fun HomeView(
         // Show TaskInputView for the selected task
         TaskInputView(
             initialTitle = selectedTask!!.title,
-            initialDescription = selectedTask!!.description ?: "",
+            initialDescription = selectedTask!!.details ?: "",
             onSaveTask = { updatedTitle, updatedDescription ->
                 // Save the updated task
 
                 val updatedTask = selectedTask!!.copy(
                     title = updatedTitle,
-                    description = updatedDescription,
+                    details = updatedDescription,
                     id = selectedTask!!.id // Reassign the id explicitly, although it remains unchanged
                 )
 
@@ -107,7 +107,7 @@ fun HomeView(
                     tasks.map {
                         if (it.id == updatedTask.id) {
                             it.title = updatedTask.title
-                            it.description = updatedTask.description
+                            it.details = updatedTask.details
                         }
                     }
                 }

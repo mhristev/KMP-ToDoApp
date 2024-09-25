@@ -42,11 +42,12 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
         }
   
     }
-    
+    @Throws(Exception::class)
     override suspend fun addToDoTask(toDoTask: ToDoTask) {
         try {
+            val taskMap = toDoTask.toMap()
             documentReference.update(mapOf(
-                TODOTASK_ARRAY to FieldValue.arrayUnion(toDoTask)
+                TODOTASK_ARRAY to FieldValue.arrayUnion(taskMap)
             ))
             println("Task added successfully.")
         } catch (e: Exception) {
@@ -63,7 +64,7 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
                 if (task.id == toDoTask.id) {
                     task.copy(isCompleted = toDoTask.isCompleted,
                         title = toDoTask.title,
-                        description = toDoTask.description,
+                        details = toDoTask.details,
                         )
                 } else {
                     task
@@ -79,12 +80,12 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
             println("Error updating isCompleted task with id ${toDoTask.id}: ${e.message}")
         }
     }
-
+    @Throws(Exception::class)
     override suspend fun deleteToDoTask(toDoTask: ToDoTask) {
-
+        val taskMap = toDoTask.toMap()
         try {
            documentReference.update(mapOf(
-               TODOTASK_ARRAY to FieldValue.arrayRemove(toDoTask)
+               TODOTASK_ARRAY to FieldValue.arrayRemove(taskMap)
            ))
         } catch (e: Exception) {
             println("Error deleting task: ${e.message}")

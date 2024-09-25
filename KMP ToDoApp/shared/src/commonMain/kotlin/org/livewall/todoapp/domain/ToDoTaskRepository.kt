@@ -8,8 +8,10 @@ import org.livewall.todoapp.domainimport.ToDoTask
 interface ToDoTaskRepository {
     fun getToDoTasks(): Flow<List<ToDoTask>>
     fun getToDoTaskById(id: String): Flow<ToDoTask?>
+    @Throws(Exception::class)
     suspend fun addToDoTask(toDoTask: ToDoTask)
     suspend fun updateToDoTask(toDoTask: ToDoTask)
+    @Throws(Exception::class)
     suspend fun deleteToDoTask(toDoTask: ToDoTask)
     suspend fun markToDoTaskCompleted(toDoTask: ToDoTask)
 }
