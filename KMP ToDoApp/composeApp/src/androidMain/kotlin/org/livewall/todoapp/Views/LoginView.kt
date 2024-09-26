@@ -1,4 +1,4 @@
-package org.livewall.todoapp
+package org.livewall.todoapp.Views
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -8,52 +8,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import org.livewall.todoapp.ViewModels.LoginViewModel
 
 @Composable
 fun LoginView(
-    userEmail: String,
-    onEmailChange: (String) -> Unit,
-    userPassword: String,
-    onPasswordChange: (String) -> Unit,
-    isLoading: Boolean,
-    errorMessage: String?,
-    onLoginClick: suspend () -> Unit
+    loginViewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
-            value = userEmail,
-            onValueChange = onEmailChange,
+            value = "",
+            onValueChange = loginViewModel::onEmailChange,
+            placeholder = { Text(text = "Test") }
+        )
+        TextField(
+            value = loginViewModel.userEmail,
+            onValueChange = loginViewModel::onEmailChange,
             placeholder = { Text(text = "Email Address") }
         )
         Spacer(modifier = Modifier.height(12.dp))
         TextField(
-            value = userPassword,
-            onValueChange = onPasswordChange,
+            value = loginViewModel.userPassword,
+            onValueChange = loginViewModel::onPasswordChange,
             placeholder = { Text(text = "Password") },
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
-                scope.launch {
-                    if (!isLoading) {
-                        onLoginClick()
-                    }
-                }
+                scope.launch { loginViewModel.onLoginClick(onLoginSuccess) }
             },
-            enabled = !isLoading
+            enabled = !loginViewModel.isLoading
         ) {
-            if (isLoading) {
+            if (loginViewModel.isLoading) {
                 CircularProgressIndicator()
             } else {
                 Text(text = "Sign in / Sign up")
             }
         }
-        errorMessage?.let { Text(text = it, color = MaterialTheme.colors.error) }
+        loginViewModel.errorMessage?.let { Text(text = it, color = MaterialTheme.colors.error) }
     }
 }

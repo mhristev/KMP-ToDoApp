@@ -1,163 +1,87 @@
 package org.livewall.todoapp
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.livewall.todoapp.Factories.HomeViewModelFactory
+import org.livewall.todoapp.Factories.LoginViewModelFactory
+import org.livewall.todoapp.ViewModels.HomeViewModel
+import org.livewall.todoapp.ViewModels.LoginViewModel
+import org.livewall.todoapp.Views.HomeView
+import org.livewall.todoapp.Views.LoginView
+import org.livewall.todoapp.Views.ToDoTaskCreateNUpdateView
 import org.livewall.todoapp.data.FirestoreAppUserRepository
 import org.livewall.todoapp.data.FirestoreAuthenticationService
 import org.livewall.todoapp.data.FirestoreToDoTaskRepository
-import org.livewall.todoapp.domain.AppUser
-import org.livewall.todoapp.domainimport.ToDoTask
-
 
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        val navController = rememberNavController()
-        val scope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
-        val authService = remember { FirestoreAuthenticationService() }
+    val authService = remember { FirestoreAuthenticationService() }
+    val userRepository = remember { FirestoreAppUserRepository() }
 
-        var userEmail by remember { mutableStateOf("") }
-        var userPassword by remember { mutableStateOf("") }
+    val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(authService, userRepository))
+    val homeViewModel: HomeViewModel? = authService.currentUser?.uid?.let {
+        viewModel(factory = HomeViewModelFactory(FirestoreToDoTaskRepository(it)))
+    }
 
-        var appUser by remember { mutableStateOf<AppUser?>(null) }
+    NavHost(navController = navController, startDestination = if (authService.currentUser  != null) "home" else "login") {
 
-        val coroutineScope = rememberCoroutineScope()
-
-        var isLoading by remember { mutableStateOf(false) }
-        var errorMessage by remember { mutableStateOf<String?>(null) }
-
-        val repository = FirestoreAppUserRepository()
-
-        LaunchedEffect(authService) {
-            authService.authState.collect { user ->
-                if (user != null) {
-                    appUser = repository.getAppUser(user.uid)
+        composable("login") {
+            LoginView(
+                loginViewModel = loginViewModel,
+                onLoginSuccess = {
+                    navController.navigate("home")
                 }
-            }
+            )
         }
 
-        NavHost(navController = navController, startDestination = "home") {
-            composable("home") {
-                if (authService.currentUser == null) {
-                    LoginView(
-                        userEmail = userEmail,
-                        onEmailChange = { userEmail = it },
-                        userPassword = userPassword,
-                        onPasswordChange = { userPassword = it },
-                        isLoading = isLoading,
-                        errorMessage = errorMessage,
-                        onLoginClick = {
-                            scope.launch {
-                                isLoading = true
-                                errorMessage = null
-                                try {
-                                    appUser =
-                                        authService.signIn(
-                                            email = userEmail,
-                                            password = userPassword
-                                        )
-                                } catch (e: Exception) {
-                                    try {
-                                        appUser = authService.signUp(
-                                            email = userEmail,
-                                            password = userPassword
-                                        )
-                                    } catch (e: Exception) {
-                                        errorMessage = e.message
-                                    }
-                                } finally {
-                                    isLoading = false
-                                }
-                            }
-                        }
-                    )
-                } else {
-                    HomeView(
-                        userId = appUser?.id ?: "Unknown Id",
-                        tasks = appUser?.tasks,
-                        onAddTaskClick = {
-                            navController.navigate("taskInput")
-                        },
-                        onSignOutClick = {
-                            coroutineScope.launch {
-                                authService.signOut()
-                                appUser = null
-                            }
-                        },
-                        onTaskCheckedChange = { task, isChecked ->
-                            val updatedTask = appUser?.tasks?.find { it.id == task.id }
-                            if (updatedTask != null) {
-                                updatedTask.isCompleted = isChecked
-                                scope.launch {
-                                    appUser?.id?.let {
-                                        FirestoreToDoTaskRepository(it).updateToDoTask(
-                                            updatedTask
-                                        )
-                                    }
-                                }
-                            }
-
-//                            appUser?.tasks?.find { it.id == task.id }?.isCompleted = isChecked
-//                            taskRepository.updateToDoTask()
-                        },
-                        onSaveTask = { task ->
-                            val updatedTask = appUser?.tasks?.find { it.id == task.id }
-                            scope.launch {
-                                appUser?.id?.let {
-
-                                        FirestoreToDoTaskRepository(it).updateToDoTask(
-                                            task
-                                        )
-
-                                }
-                            }
-
-//                            appUser?.tasks?.find { it.id == task.id }?.isCompleted = isChecked
-//                            taskRepository.updateToDoTask()
-                        }
-
-
-                    )
-
-                }
-            }
-            composable("taskInput") {
-                TaskInputView(
-                    onSaveTask = { title, description ->
-                        // Save the task and go back to the home screen
-                        scope.launch {
-                            appUser?.id?.let {
-                                FirestoreToDoTaskRepository(it).addToDoTask(
-                                    ToDoTask(title, description, false)
-                                )
-                            }
-                            // Navigate back to home after saving the task
-                            appUser = appUser?.id?.let { it1 -> repository.getAppUser(it1) }
-                            navController.popBackStack()
-                        }
+        composable("home") {
+            homeViewModel?.let {
+                HomeView(
+                    homeViewModel = it,
+                    onAddTaskClick = { navController.navigate("taskInput") },
+                    onEditTaskClick = { task ->
+                        navController.navigate("taskInput/${task.id}")
                     },
-                    onCancel = {
-                        // Navigate back to home if the task is not saved
-                        navController.popBackStack()
+                    onSignOutClick = {
+                        authService.signOut()
                     },
-                    initialTitle = "",
-                    initialDescription = ""
+                    navController = navController
                 )
             }
         }
+        composable("taskInput/{taskId}") { backStackEntry ->
+            val taskId = backStackEntry.arguments?.getString("taskId")
+            val task = homeViewModel?.getTaskById(taskId)
 
+            ToDoTaskCreateNUpdateView(
+                initialTitle = task?.title ?: "",
+                initialDescription = task?.details ?: "",
+                onSaveTask = { title, description ->
+                    if (homeViewModel != null) {
+                        homeViewModel.updateTask(taskId, title, description)
+                    }
+                    navController.popBackStack()
+                },
+                onCancel = { navController.popBackStack() }
+            )
+        }
+
+        composable("taskInput") {
+            ToDoTaskCreateNUpdateView(
+                initialTitle = "",
+                initialDescription = "",
+                onSaveTask = { title, description ->
+                    homeViewModel?.addTask(title, description)
+                    navController.popBackStack()
+                },
+                onCancel = { navController.popBackStack() }
+            )
+        }
     }
 }

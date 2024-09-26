@@ -1,4 +1,4 @@
-package org.livewall.todoapp
+package org.livewall.todoapp.Components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun TaskItem(
+fun ToDoTaskItemComponent(
     title: String,
     description: String,
     isCompleted: Boolean,
@@ -28,7 +28,8 @@ fun TaskItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp).clickable { onClick() },
+            .padding(16.dp)
+            .clickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -38,12 +39,11 @@ fun TaskItem(
         }
 
         Checkbox(
-            checked = checkedState,
+            checked = isCompleted,
             onCheckedChange = {
-                checkedState = it // Update the internal state
-                onCheckedChange(it) // Pass the updated state to the parent or external handler
-            },
-//            enabled = !isCompleted // Disable if already completed
+                checkedState = it
+                onCheckedChange(it)
+            }
         )
     }
 }

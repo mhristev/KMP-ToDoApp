@@ -1,4 +1,4 @@
-package org.livewall.todoapp
+package org.livewall.todoapp.Views
 
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.*
@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TaskInputView(
-    initialTitle: String, // Receive initial title
+fun ToDoTaskCreateNUpdateView(
+    initialTitle: String,
     initialDescription: String,
     onSaveTask: (String, String) -> Unit,
     onCancel: () -> Unit
