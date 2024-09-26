@@ -14,25 +14,27 @@ struct ToDoTaskListComponent: View {
     var onDeleteTask: (ToDoTask) -> Void
     var onToggleCompleted: (ToDoTask) -> Void
     var onUpdateTask: (ToDoTask, String, String, Bool) -> Void
-
-
+    
+    var sortedTasks: [ToDoTask] {
+        toDoTasks.sorted { !$0.isCompleted && $1.isCompleted }
+    }
     var body: some View {
         List {
-        ForEach(toDoTasks.indices, id: \.self) { index in
+            ForEach(sortedTasks.indices, id: \.self) { index in
                         ToDoTaskItemComponent(
-                            title: toDoTasks[index].title,
-                            details: toDoTasks[index].details ?? "",
-                            isCompleted: toDoTasks[index].isCompleted,
+                            title: sortedTasks[index].title,
+                            details: sortedTasks[index].details ?? "",
+                            isCompleted: sortedTasks[index].isCompleted,
                             onToggleCompleted: {
-                                onToggleCompleted(toDoTasks[index])
+                                onToggleCompleted(sortedTasks[index])
                             },
                             onUpdateTask: { updatedTitle, updatedDetails, updatedIsCompleted in
-                                onUpdateTask(toDoTasks[index], updatedTitle, updatedDetails, updatedIsCompleted)
+                                onUpdateTask(sortedTasks[index], updatedTitle, updatedDetails, updatedIsCompleted)
                             }
                         )
         }.onDelete { indexSet in
             indexSet.forEach { index in
-                let task = toDoTasks[index]
+                let task = sortedTasks[index]
                 onDeleteTask(task)
             }
         }

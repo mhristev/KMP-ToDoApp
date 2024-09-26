@@ -8,16 +8,37 @@
 
 import SwiftUI
 import Shared
+import FirebaseAuth
+
+// Do I inject the model view or initialize it in the view? (testing easier when its injected?)
+
 
 struct ContentView: View {
-    private var authService = FirestoreAuthenticationService()
-    
+    @State private var authService = FirestoreAuthenticationService()
+    @State private var isAuthenticated = false
+
     var body: some View {
-        guard let _ = authService.currentUser else {
-            return AnyView(LoginView(authService: authService))
+        VStack {
+            if isAuthenticated {
+                HomeView(authService: authService)
+            } else {
+                LoginView(authService: authService)
+            }
         }
-        
-        return AnyView(HomeView(authService: authService))
+        .onAppear {
+            setupAuthStateListener()
+        }
+    }
+    
+    // This function will listen for changes in the authentication state
+    private func setupAuthStateListener() {
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if let _ = user {
+                isAuthenticated = true
+            } else {
+                isAuthenticated = false
+            }
+        }
     }
 }
 

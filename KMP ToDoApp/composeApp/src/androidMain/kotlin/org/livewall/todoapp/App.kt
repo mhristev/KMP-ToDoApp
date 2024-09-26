@@ -17,6 +17,24 @@ import org.livewall.todoapp.data.FirestoreAppUserRepository
 import org.livewall.todoapp.data.FirestoreAuthenticationService
 import org.livewall.todoapp.data.FirestoreToDoTaskRepository
 
+
+//1. ViewModel and Lifecycle Awareness
+//
+//•	ViewModel is lifecycle-aware, which means it survives configuration changes (like screen rotations) and helps manage UI-related data in a lifecycle-conscious way.
+//•	Jetpack Compose, like any UI framework, requires that the data provided to the UI is consistent and persists across configuration changes.
+//
+//By injecting a ViewModel into a composable function, you ensure that the UI is receiving a reference to a single instance of the ViewModel, which survives configuration changes and can handle data updates.
+//
+//2. Factory Pattern and Parameterized ViewModels
+//
+//The factory pattern comes into play when your ViewModel requires parameters to be passed to it at creation time (e.g., repository dependencies or user-specific data like an id).
+//
+//In Android, ViewModelProvider (part of the architecture components) creates and manages ViewModels. However, by default, it doesn’t handle ViewModels that require parameters. This is where the factory pattern is useful:
+//
+//•	The factory pattern allows you to inject custom dependencies (such as repositories or services) into the ViewModel, making it flexible and testable.
+//•	It also separates the ViewModel’s creation logic from its use, adhering to Separation of Concerns.
+
+
 @Composable
 fun App() {
     val navController = rememberNavController()

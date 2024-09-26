@@ -3,8 +3,12 @@ package org.livewall.todoapp.Components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -21,6 +25,7 @@ fun ToDoTaskItemComponent(
     isCompleted: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     onClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
 
     var checkedState by remember { mutableStateOf(isCompleted) }
@@ -45,5 +50,10 @@ fun ToDoTaskItemComponent(
                 onCheckedChange(it)
             }
         )
+        // Delete button (optional)
+        IconButton(onClick = onDeleteClick) {
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+        }
+
     }
 }
