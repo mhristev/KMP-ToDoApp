@@ -1,4 +1,4 @@
-package org.livewall.todoapp.data
+package org.livewall.todoapp.data.repositoryimpl
 
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.FieldValue
@@ -7,8 +7,8 @@ import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-import org.livewall.todoapp.domain.ToDoTaskRepository
-import org.livewall.todoapp.domainimport.ToDoTask
+import org.livewall.todoapp.domain.repositories.ToDoTaskRepository
+import org.livewall.todoapp.domain.models.ToDoTask
 
 const val TODOTASK_ARRAY = "tasks"
 

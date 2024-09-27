@@ -26,7 +26,7 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("Welcome")
+                Text(viewModel.isSignUp ? "Create account" : "Log in")
                     .font(.largeTitle)
                     .fontWeight(.black)
                     .padding(.bottom, 42)
@@ -35,9 +35,9 @@ struct LoginView: View {
                     InputFieldComponent(data: $viewModel.password, title: "Password")
                 }.padding(.bottom, 16)
                 Button(action: {
-                    viewModel.signIn()
+                    viewModel.isSignUp ? viewModel.signUp() : viewModel.signIn()
                 }) {
-                    Text("Sign In")
+                    Text(viewModel.isSignUp ? "Sign Up" : "Sign In")
                         .fontWeight(.heavy)
                         .font(.title2)
                         .frame(maxWidth: .infinity)
@@ -51,6 +51,19 @@ struct LoginView: View {
                         .foregroundColor(.red)
                         .padding()
                 }
+                
+                HStack {
+                    Text(viewModel.isSignUp ? "Have an account?" : "No account?")
+                    
+                    Button(action: {
+                        viewModel.toggleSignUpLogin()
+                    }) {
+                        Text(viewModel.isSignUp ? "Log in" : "Sign up")
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                    }
+                }
+                .padding(.bottom, 16)
                 
             }.padding()
                 .fullScreenCover(isPresented: $viewModel.isAuthenticated) {

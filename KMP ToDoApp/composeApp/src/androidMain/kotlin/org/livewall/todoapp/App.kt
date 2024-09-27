@@ -16,9 +16,9 @@ import org.livewall.todoapp.ViewModels.LoginViewModel
 import org.livewall.todoapp.Views.HomeView
 import org.livewall.todoapp.Views.LoginView
 import org.livewall.todoapp.Views.ToDoTaskCreateNUpdateView
-import org.livewall.todoapp.data.FirestoreAppUserRepository
-import org.livewall.todoapp.data.FirestoreAuthenticationService
-import org.livewall.todoapp.data.FirestoreToDoTaskRepository
+import org.livewall.todoapp.data.repositoryimpl.FirestoreAppUserRepository
+import org.livewall.todoapp.data.repositoryimpl.FirestoreAuthenticationService
+import org.livewall.todoapp.data.repositoryimpl.FirestoreToDoTaskRepository
 
 @Composable
 fun App() {

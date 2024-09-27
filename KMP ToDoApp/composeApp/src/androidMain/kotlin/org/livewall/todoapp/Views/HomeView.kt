@@ -1,8 +1,6 @@
 package org.livewall.todoapp.Views
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,34 +9,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import org.livewall.todoapp.Components.ToDoTaskItemComponent
 import org.livewall.todoapp.ViewModels.HomeViewModel
-import org.livewall.todoapp.domainimport.ToDoTask
+import org.livewall.todoapp.domain.models.ToDoTask
 
-
-@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeView(
@@ -80,7 +68,6 @@ fun HomeView(
                 Text(text = "Sign Out")
             }
 
-
             Spacer(modifier = Modifier.height(16.dp))
 
             val sortedTasks = homeViewModel.toDoTasks.sortedBy { it.isCompleted }
@@ -96,8 +83,6 @@ fun HomeView(
                         onClick = { onEditTaskClick(task) },
                         onDeleteClick = { homeViewModel.deleteTask(task)}
                     )
-
-
                 }
             }
         }

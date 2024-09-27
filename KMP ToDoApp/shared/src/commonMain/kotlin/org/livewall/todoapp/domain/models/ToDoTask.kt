@@ -1,4 +1,4 @@
-package org.livewall.todoapp.domainimport
+package org.livewall.todoapp.domain.models
 
 import com.benasher44.uuid.uuid4
 import kotlinx.serialization.SerialName
@@ -16,12 +16,10 @@ data class ToDoTask(
         title,
         details,
         isCompleted,
-        uuid4().toString() // Auto-generate id
+        uuid4().toString()
     )
 
     fun toMap(): Map<String, Any?> {
-//        val jsonString = Json.encodeToString(this)
-//        return Json.parseToJsonElement(jsonString).jsonObject.mapValues { it.value.toString() }
         return mapOf(
             "title" to title,
             "details" to details,

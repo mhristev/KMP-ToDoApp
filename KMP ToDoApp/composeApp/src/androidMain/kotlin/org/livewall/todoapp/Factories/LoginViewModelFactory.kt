@@ -3,8 +3,8 @@ package org.livewall.todoapp.Factories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.livewall.todoapp.ViewModels.LoginViewModel
-import org.livewall.todoapp.data.FirestoreAppUserRepository
-import org.livewall.todoapp.data.FirestoreAuthenticationService
+import org.livewall.todoapp.data.repositoryimpl.FirestoreAppUserRepository
+import org.livewall.todoapp.data.repositoryimpl.FirestoreAuthenticationService
 
 class LoginViewModelFactory(
     private val authService: FirestoreAuthenticationService,

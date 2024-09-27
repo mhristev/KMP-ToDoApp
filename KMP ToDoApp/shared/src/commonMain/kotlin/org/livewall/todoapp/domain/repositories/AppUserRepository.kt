@@ -1,6 +1,6 @@
-package org.livewall.todoapp.domain
+package org.livewall.todoapp.domain.repositories
 
-import kotlinx.coroutines.flow.Flow
+import org.livewall.todoapp.domain.models.AppUser
 
 interface AppUserRepository {
     suspend fun getAppUser(id: String):  AppUser?

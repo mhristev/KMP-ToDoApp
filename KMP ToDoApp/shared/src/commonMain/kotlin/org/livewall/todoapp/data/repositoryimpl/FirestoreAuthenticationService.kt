@@ -1,12 +1,12 @@
-package org.livewall.todoapp.data
+package org.livewall.todoapp.data.repositoryimpl
 
 import dev.gitlive.firebase.auth.auth
-import org.livewall.todoapp.domain.AuthenticationService
+import org.livewall.todoapp.domain.repositories.AuthenticationService
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
-import org.livewall.todoapp.domain.AppUser
+import org.livewall.todoapp.domain.models.AppUser
 
 class FirestoreAuthenticationService: AuthenticationService {
 

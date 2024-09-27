@@ -18,6 +18,7 @@ extension LoginView {
         var password: String = ""
         var errorMessage: String?
         var isAuthenticated: Bool = false
+        var isSignUp: Bool = false
         
         private let authService: FirestoreAuthenticationService
         
@@ -31,13 +32,15 @@ extension LoginView {
             return isAuthenticated
         }
         
+        func toggleSignUpLogin() {
+            isSignUp.toggle()
+        }
+        
         func signIn() {
             Task {
                 do {
                     let appUser = try await authService.signIn(email: email, password: password)
-                    print(appUser?.id)
-                    print(email)
-                    print(password)
+
                     if appUser != nil {
                         DispatchQueue.main.async {
                             self.isAuthenticated = true
@@ -70,10 +73,6 @@ extension LoginView {
                 }
             }
         }
-        
-        
-        
-        
         
     }
 }

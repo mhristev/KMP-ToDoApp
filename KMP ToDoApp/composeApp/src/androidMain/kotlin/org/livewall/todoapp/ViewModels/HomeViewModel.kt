@@ -4,8 +4,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.livewall.todoapp.data.FirestoreToDoTaskRepository
-import org.livewall.todoapp.domainimport.ToDoTask
+import org.livewall.todoapp.data.repositoryimpl.FirestoreToDoTaskRepository
+import org.livewall.todoapp.domain.models.ToDoTask
 
 
 class HomeViewModel(

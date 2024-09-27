@@ -3,7 +3,7 @@ package org.livewall.todoapp.Factories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import org.livewall.todoapp.ViewModels.HomeViewModel
-import org.livewall.todoapp.data.FirestoreToDoTaskRepository
+import org.livewall.todoapp.data.repositoryimpl.FirestoreToDoTaskRepository
 
 class HomeViewModelFactory(
     private val taskRepository: FirestoreToDoTaskRepository

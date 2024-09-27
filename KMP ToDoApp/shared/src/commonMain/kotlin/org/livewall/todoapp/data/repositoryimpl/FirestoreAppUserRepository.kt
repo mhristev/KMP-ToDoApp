@@ -1,13 +1,12 @@
-package org.livewall.todoapp.data
+package org.livewall.todoapp.data.repositoryimpl
 
-import com.benasher44.uuid.uuid4
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.livewall.todoapp.domain.AppUser
-import org.livewall.todoapp.domain.AppUserRepository
-import org.livewall.todoapp.domainimport.ToDoTask
+import org.livewall.todoapp.domain.models.AppUser
+import org.livewall.todoapp.domain.repositories.AppUserRepository
+import org.livewall.todoapp.domain.models.ToDoTask
 
 class FirestoreAppUserRepository: AppUserRepository {
     private val db = Firebase.firestore

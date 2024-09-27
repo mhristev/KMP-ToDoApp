@@ -1,7 +1,6 @@
-package org.livewall.todoapp.domain
+package org.livewall.todoapp.domain.models
 
 import kotlinx.serialization.Serializable
-import org.livewall.todoapp.domainimport.ToDoTask
 
 @Serializable
 data class AppUser(val id: String, val email: String, val tasks: List<ToDoTask> = emptyList())

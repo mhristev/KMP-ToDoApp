@@ -1,19 +1,19 @@
 package org.livewall.todoapp.ViewModels
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.livewall.todoapp.data.FirestoreAuthenticationService
-import org.livewall.todoapp.data.FirestoreAppUserRepository
-import org.livewall.todoapp.domain.AppUser
+import org.livewall.todoapp.data.repositoryimpl.FirestoreAuthenticationService
+import org.livewall.todoapp.data.repositoryimpl.FirestoreAppUserRepository
+import org.livewall.todoapp.domain.models.AppUser
 
 class LoginViewModel(
     private val authService: FirestoreAuthenticationService,
     private val repository: FirestoreAppUserRepository
 ) : ViewModel() {
-
     var userEmail by mutableStateOf("")
     var userPassword by mutableStateOf("")
     var isLoading by mutableStateOf(false)
