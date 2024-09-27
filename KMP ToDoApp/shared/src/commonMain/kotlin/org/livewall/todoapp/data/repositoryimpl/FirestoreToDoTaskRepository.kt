@@ -70,12 +70,9 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
                     task
                 }
             }
-
             documentReference.update(mapOf(
                 TODOTASK_ARRAY to updatedTasks
             ))
-
-
         } catch (e: Exception) {
             println("Error updating isCompleted task with id ${toDoTask.id}: ${e.message}")
         }
@@ -108,8 +105,6 @@ class FirestoreToDoTaskRepository(private val currentUserId: String) : ToDoTaskR
             documentReference.update(mapOf(
                 TODOTASK_ARRAY to updatedTasks
             ))
-
-
         } catch (e: Exception) {
             println("Error updating isCompleted task with id ${toDoTask.id}: ${e.message}")
         }

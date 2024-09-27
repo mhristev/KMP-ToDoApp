@@ -6,6 +6,7 @@ import org.livewall.todoapp.domain.models.ToDoTask
 interface ToDoTaskRepository {
     fun getToDoTasks(): Flow<List<ToDoTask>>
     fun getToDoTaskById(id: String): Flow<ToDoTask?>
+//    @Throws(FirebaseFirestoreException::class, CancellationException::class)
     @Throws(Exception::class)
     suspend fun addToDoTask(toDoTask: ToDoTask)
     suspend fun updateToDoTask(toDoTask: ToDoTask)
