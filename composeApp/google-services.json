@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "188490273709",
+    "project_id": "kmp-todo-be97b",
+    "storage_bucket": "kmp-todo-be97b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188490273709:android:90fb6c77c87f3d7f150724",
+        "android_client_info": {
+          "package_name": "org.livewall.todoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188490273709-7i010u8c561vpqptqjl9knhsq4ruh252.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3wDX_OoVczvyx-gaCgz0pv43XZS0m0pk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188490273709-7i010u8c561vpqptqjl9knhsq4ruh252.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
