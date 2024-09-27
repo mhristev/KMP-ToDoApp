@@ -40,11 +40,25 @@ class LoginViewModel(
                     onLoginSuccess()
                 }
             } catch (e: Exception) {
-                try {
-                    appUser = authService.signUp(email = userEmail, password = userPassword)
-                } catch (e: Exception) {
-                    errorMessage = e.message
+                errorMessage = e.message
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun onSignUpClick(onSignUpSuccess: () -> Unit) {
+        viewModelScope.launch {
+            isLoading = true
+            errorMessage = null
+            try {
+                appUser = authService.signUp(email = userEmail, password = userPassword)
+                if (appUser != null) {
+                    appUser = repository.getAppUser(authService.currentUser!!.uid)
+                    onSignUpSuccess()
                 }
+            } catch (e: Exception) {
+                errorMessage = e.message
             } finally {
                 isLoading = false
             }

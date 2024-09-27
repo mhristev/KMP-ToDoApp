@@ -1,7 +1,10 @@
 package org.livewall.todoapp
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,24 +20,6 @@ import org.livewall.todoapp.data.FirestoreAppUserRepository
 import org.livewall.todoapp.data.FirestoreAuthenticationService
 import org.livewall.todoapp.data.FirestoreToDoTaskRepository
 
-
-//1. ViewModel and Lifecycle Awareness
-//
-//•	ViewModel is lifecycle-aware, which means it survives configuration changes (like screen rotations) and helps manage UI-related data in a lifecycle-conscious way.
-//•	Jetpack Compose, like any UI framework, requires that the data provided to the UI is consistent and persists across configuration changes.
-//
-//By injecting a ViewModel into a composable function, you ensure that the UI is receiving a reference to a single instance of the ViewModel, which survives configuration changes and can handle data updates.
-//
-//2. Factory Pattern and Parameterized ViewModels
-//
-//The factory pattern comes into play when your ViewModel requires parameters to be passed to it at creation time (e.g., repository dependencies or user-specific data like an id).
-//
-//In Android, ViewModelProvider (part of the architecture components) creates and manages ViewModels. However, by default, it doesn’t handle ViewModels that require parameters. This is where the factory pattern is useful:
-//
-//•	The factory pattern allows you to inject custom dependencies (such as repositories or services) into the ViewModel, making it flexible and testable.
-//•	It also separates the ViewModel’s creation logic from its use, adhering to Separation of Concerns.
-
-
 @Composable
 fun App() {
     val navController = rememberNavController()
@@ -43,9 +28,18 @@ fun App() {
     val userRepository = remember { FirestoreAppUserRepository() }
 
     val loginViewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(authService, userRepository))
-    val homeViewModel: HomeViewModel? = authService.currentUser?.uid?.let {
-        viewModel(factory = HomeViewModelFactory(FirestoreToDoTaskRepository(it)))
+
+    var isLoginSuccessful by remember { mutableStateOf(authService.currentUser != null) }
+
+    var homeViewModel: HomeViewModel? = null
+
+    // To init after the user is successfully logged in and in the beginning of the app if the current user is already present
+    if (isLoginSuccessful && authService.currentUser != null) {
+        homeViewModel = viewModel(
+            factory = HomeViewModelFactory(FirestoreToDoTaskRepository(authService.currentUser?.uid ?: ""))
+        )
     }
+
 
     NavHost(navController = navController, startDestination = if (authService.currentUser  != null) "home" else "login") {
 
@@ -53,6 +47,7 @@ fun App() {
             LoginView(
                 loginViewModel = loginViewModel,
                 onLoginSuccess = {
+                    isLoginSuccessful = true
                     navController.navigate("home")
                 }
             )
@@ -81,9 +76,7 @@ fun App() {
                 initialTitle = task?.title ?: "",
                 initialDescription = task?.details ?: "",
                 onSaveTask = { title, description ->
-                    if (homeViewModel != null) {
-                        homeViewModel.updateTask(taskId, title, description)
-                    }
+                    homeViewModel?.updateTask(taskId, title, description)
                     navController.popBackStack()
                 },
                 onCancel = { navController.popBackStack() }

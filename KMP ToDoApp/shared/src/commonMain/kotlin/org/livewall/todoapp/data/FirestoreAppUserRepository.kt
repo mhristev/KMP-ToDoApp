@@ -12,7 +12,7 @@ import org.livewall.todoapp.domainimport.ToDoTask
 class FirestoreAppUserRepository: AppUserRepository {
     private val db = Firebase.firestore
 
-    override suspend fun getAppUser(id: String): AppUser? {
+    override suspend fun getAppUser(id: String): AppUser {
         val documentSnapshot = db.collection("Users").document(id).get()
         val appUser = documentSnapshot.data<AppUser>()
         return appUser
