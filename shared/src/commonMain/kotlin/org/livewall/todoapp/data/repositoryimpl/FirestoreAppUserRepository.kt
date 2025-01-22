@@ -28,6 +28,4 @@ class FirestoreAppUserRepository: AppUserRepository {
         p.set(user)
         return user
     }
-
-
 }

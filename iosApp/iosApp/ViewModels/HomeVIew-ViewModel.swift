@@ -32,11 +32,9 @@ extension HomeView {
         }
 
         func loadTasks() {
-            Task {
+            Task { @MainActor in
                 for try await taskList in taskRepository.getToDoTasks() {
-                    DispatchQueue.main.async {
-                        self.toDoTasks = taskList
-                    }
+                        toDoTasks = taskList
                 }
             }
         }
