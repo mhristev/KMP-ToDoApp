@@ -12,6 +12,7 @@ import Shared
 
 extension LoginView {
     
+    @MainActor
     @Observable
     class ViewModel {
         var email: String = ""
@@ -25,7 +26,6 @@ extension LoginView {
         init(authService: FirestoreAuthenticationService) {
             self.authService = authService
         }
-        
         
         func checkIsAuthenticated() -> Bool {
             isAuthenticated = authService.currentUser != nil
@@ -42,17 +42,13 @@ extension LoginView {
                     let appUser = try await authService.signIn(email: email, password: password)
 
                     if appUser != nil {
-                        DispatchQueue.main.async {
-                            self.isAuthenticated = true
-                        }
+                        isAuthenticated = true
                     }
                     print("User successfully loged in.")
                 } catch let error {
                     print(error.self)
                     print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.errorMessage = "Sign in failed:" + error.localizedDescription
-                    }
+                    errorMessage = "Sign in failed:" + error.localizedDescription
                 }
             }
         }
@@ -62,14 +58,10 @@ extension LoginView {
                 do {
                     let appUser = try await authService.signUp(email: email, password: password)
                     if appUser != nil {
-                        DispatchQueue.main.async {
-                            self.isAuthenticated = true
-                        }
+                        isAuthenticated = true
                     }
                 } catch {
-                    DispatchQueue.main.async {
-                        self.errorMessage = "Sign up failed: \(error.localizedDescription)"
-                    }
+                    self.errorMessage = "Sign up failed: \(error.localizedDescription)"
                 }
             }
         }

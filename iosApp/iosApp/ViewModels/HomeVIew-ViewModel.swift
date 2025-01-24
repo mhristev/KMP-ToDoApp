@@ -10,7 +10,7 @@ import Foundation
 import Shared
 
 extension HomeView {
-    
+    @MainActor
     class ViewModel: ObservableObject {
         @Published var toDoTasks: [ToDoTask] = []
         private(set) var task: Task<Void, Never>?
@@ -41,18 +41,13 @@ extension HomeView {
         
         
         func signOut() {
-            Task {
-                do {
-                    try await authService.signOut()
-                    DispatchQueue.main.async {
-                        self.isAuthenticated = false
-                    }
-                } catch {
-                    print(error.localizedDescription)
-                }
+            Task { @MainActor in
+                try await authService.signOut()
+                self.isAuthenticated = false
             }
         }
         
+
         func toggleTaskCompletion(task: ToDoTask) async {
                 let updatedTask = task
                 updatedTask.isCompleted.toggle()
@@ -60,9 +55,7 @@ extension HomeView {
                 do {
                     try await taskRepository.updateToDoTask(toDoTask: updatedTask)
                     if let index = toDoTasks.firstIndex(where: { $0.id == updatedTask.id }) {
-                        DispatchQueue.main.async {
-                            self.toDoTasks[index] = updatedTask
-                        }
+                        toDoTasks[index] = updatedTask
                     }
                 } catch {
                     print("Failed to update task: \(error)")
